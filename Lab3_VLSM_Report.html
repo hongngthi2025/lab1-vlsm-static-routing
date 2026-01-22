@@ -187,6 +187,31 @@
             margin: 15px 0;
         }
 
+        .requirement-box {
+            background-color: #e6f3ff;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .requirement-title {
+            font-weight: bold;
+            color: #2980b9;
+            margin-bottom: 5px;
+        }
+
+        .note-section {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .note-section ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            font-weight: normal;
+        }
+
         .step {
             background: #fff;
             border: 1px solid #e0e0e0;
@@ -354,9 +379,10 @@
         <section>
             <h3>3. CHIA ĐỊA CHỈ IP - VLSM (Yêu cầu 1)</h3>
 
-            <div class="info-box">
-                <strong>Địa chỉ gốc:</strong> 10.81.x.0/24 (với x là số thứ tự nhóm)<br>
-                <strong>Ví dụ:</strong> Sử dụng 10.81.1.0/24 cho nhóm 1
+            <div class="requirement-box">
+                <div class="requirement-title">Yêu cầu 1.</div>
+                Sử dụng lớp mạng <strong>10.81.x.0/24</strong>, với <strong>x</strong> là số thứ tự nhóm (đã đăng ký) để
+                chia các mạng con cho mô hình của bài thực hành với số host phù hợp. (Bài làm chọn x=1)
             </div>
 
             <div style="text-align: center; margin: 20px 0;">
@@ -425,6 +451,20 @@
                     <td>10.81.1.191</td>
                 </tr>
             </table>
+
+            <div class="requirement-box">
+                <div class="requirement-title">Yêu cầu 2.</div>
+                Sử dụng các mạng con đã chia được ở <strong>Yêu cầu 1</strong> cho các thiết bị của mô hình, lập bảng
+                địa chỉ IP cho các thiết bị với bảng bên dưới.
+            </div>
+
+            <div class="note-section">
+                Lưu ý:
+                <ul>
+                    <li>Sử dụng <em>địa chỉ đầu tiên</em> của lớp mạng để gán cho default gateway.</li>
+                    <li>Sử dụng <em>địa chỉ cuối cùng</em> của lớp mạng được gán cho PC hoặc Server.</li>
+                </ul>
+            </div>
 
             <h4>3.2 Bảng địa chỉ IP các thiết bị (Yêu cầu 2)</h4>
             <table>

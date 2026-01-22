@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 1: VLSM và Định tuyến tĩnh</title>
+    <style>
+        :root {
+            --primary: #1a5f7a;
+            --secondary: #159895;
+            --accent: #57c5b6;
+            --bg: #f8f9fa;
+            --text: #2c3e50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            color: var(--secondary);
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .student-info {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .student-info h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .student-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .student-info td,
+        .student-info th {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+        h3 {
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--secondary);
+            font-size: 15px;
+            margin: 15px 0 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+
+        .code-block .prompt {
+            color: #569cd6;
+        }
+
+        .code-block .command {
+            color: #ce9178;
+        }
+
+        .code-block .comment {
+            color: #6a9955;
+        }
+
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, #e8f4f8, #d0e8f0);
+            border: 2px dashed var(--secondary);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin: 15px 0;
+            color: var(--primary);
+        }
+
+        .screenshot-placeholder::before {
+            content: "📸";
+            font-size: 30px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fff3cd, #ffeeba);
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+
+        .step {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .step-title {
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .conclusion {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .conclusion h3 {
+            color: white;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .conclusion ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .conclusion li {
+            padding: 6px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .conclusion li::before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+        }
+
+        .topology-desc {
+            background: #f0f7ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .topology-desc ul {
+            padding-left: 20px;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+                padding: 20px;
+            }
+
+            .step,
+            section {
+                page-break-inside: avoid;
+            }
+
+            .screenshot-placeholder {
+                min-height: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>BÁO CÁO BÀI THỰC HÀNH SỐ 1</h1>
+            <h2>Variable Length Subnet Mask và Định tuyến tĩnh</h2>
+            <p style="margin-top: 10px; color: #666;">Khoa MMT&TT - UIT | Học kỳ I - Năm học 2021-2022</p>
+        </header>
+
+        <div class="student-info">
+            <h3>📋 THÔNG TIN SINH VIÊN</h3>
+            <table>
+                <tr>
+                    <th>STT</th>
+                    <th>Họ và Tên</th>
+                    <th>MSSV</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>NGUYỄN THỊ KIM CHI</td>
+                    <td>[MSSV1]</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>[Họ tên SV2]</td>
+                    <td>[MSSV2]</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>[Họ tên SV3]</td>
+                    <td>[MSSV3]</td>
+                </tr>
+            </table>
+            <p style="margin-top: 10px;"><strong>Mã lớp:</strong> NT132.M11.ANTT.1</p>
+        </div>
+
+        <section>
+            <h3>1. MỤC TIÊU BÀI LAB</h3>
+            <ul style="padding-left: 20px;">
+                <li>Làm quen và sử dụng phần mềm Packet Tracer để giả lập mô hình mạng</li>
+                <li>Hiểu rõ cách chia địa chỉ IP với số host không bằng nhau (VLSM)</li>
+                <li>Xây dựng mô hình mạng và cấu hình thiết bị Cisco</li>
+                <li>Hiểu nguyên tắc định tuyến và cấu hình định tuyến tĩnh với đường chính/dự phòng</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>2. SƠ ĐỒ MẠNG (TOPOLOGY)</h3>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="network_topology.png" alt="Network Topology"
+                    style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <p style="font-style: italic; color: #666; margin-top: 10px;">Hình 1. Sơ đồ mạng Lab 1 - VLSM và Static
+                    Routing</p>
+            </div>
+            <div class="topology-desc">
+                <strong>Mô tả topology:</strong>
+                <ul>
+                    <li><strong>Nhánh 1:</strong> PC-A (100 hosts) nối với R1</li>
+                    <li><strong>Nhánh 2:</strong> ServerB1 (10 hosts) nối với R3</li>
+                    <li><strong>Nhánh 3:</strong> ServerB2 (15 hosts) nối với R3</li>
+                    <li><strong>Kết nối Router:</strong> R1 ↔ R2, R1 ↔ R4, R2 ↔ R3, R4 ↔ R3 (vòng tròn)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3>3. CHIA ĐỊA CHỈ IP - VLSM (Yêu cầu 1)</h3>
+
+            <div class="info-box">
+                <strong>Địa chỉ gốc:</strong> 10.81.x.0/24 (với x là số thứ tự nhóm)<br>
+                <strong>Ví dụ:</strong> Sử dụng 10.81.1.0/24 cho nhóm 1
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="vlsm_subnets.png" alt="VLSM Subnets"
+                    style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <p style="font-style: italic; color: #666; margin-top: 10px;">Hình 2. Sơ đồ phân chia VLSM từ
+                    10.81.1.0/24</p>
+            </div>
+
+            <h4>3.1 Bảng phân chia Subnet</h4>
+            <table>
+                <tr>
+                    <th>Số hosts</th>
+                    <th>Network</th>
+                    <th>Subnet Mask</th>
+                    <th>Dải IP</th>
+                    <th>Broadcast</th>
+                </tr>
+                <tr>
+                    <td>100 (LAN PC-A)</td>
+                    <td>10.81.1.0/25</td>
+                    <td>255.255.255.128</td>
+                    <td>10.81.1.1 - .126</td>
+                    <td>10.81.1.127</td>
+                </tr>
+                <tr>
+                    <td>15 (ServerB2)</td>
+                    <td>10.81.1.128/27</td>
+                    <td>255.255.255.224</td>
+                    <td>10.81.1.129 - .158</td>
+                    <td>10.81.1.159</td>
+                </tr>
+                <tr>
+                    <td>10 (ServerB1)</td>
+                    <td>10.81.1.160/28</td>
+                    <td>255.255.255.240</td>
+                    <td>10.81.1.161 - .174</td>
+                    <td>10.81.1.175</td>
+                </tr>
+                <tr>
+                    <td>2 (WAN R1-R2)</td>
+                    <td>10.81.1.176/30</td>
+                    <td>255.255.255.252</td>
+                    <td>10.81.1.177 - .178</td>
+                    <td>10.81.1.179</td>
+                </tr>
+                <tr>
+                    <td>2 (WAN R1-R4)</td>
+                    <td>10.81.1.180/30</td>
+                    <td>255.255.255.252</td>
+                    <td>10.81.1.181 - .182</td>
+                    <td>10.81.1.183</td>
+                </tr>
+                <tr>
+                    <td>2 (WAN R2-R3)</td>
+                    <td>10.81.1.184/30</td>
+                    <td>255.255.255.252</td>
+                    <td>10.81.1.185 - .186</td>
+                    <td>10.81.1.187</td>
+                </tr>
+                <tr>
+                    <td>2 (WAN R4-R3)</td>
+                    <td>10.81.1.188/30</td>
+                    <td>255.255.255.252</td>
+                    <td>10.81.1.189 - .190</td>
+                    <td>10.81.1.191</td>
+                </tr>
+            </table>
+
+            <h4>3.2 Bảng địa chỉ IP các thiết bị (Yêu cầu 2)</h4>
+            <table>
+                <tr>
+                    <th>Thiết bị</th>
+                    <th>Interface</th>
+                    <th>Địa chỉ IP</th>
+                    <th>Subnet Mask</th>
+                    <th>Default GW</th>
+                </tr>
+                <tr>
+                    <td rowspan="3"><strong>R1</strong></td>
+                    <td>G0/0/1</td>
+                    <td>10.81.1.1</td>
+                    <td>255.255.255.128</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td>S0/1/0</td>
+                    <td>10.81.1.177</td>
+                    <td>255.255.255.252</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td>S0/1/1</td>
+                    <td>10.81.1.181</td>
+                    <td>255.255.255.252</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td rowspan="2"><strong>R2</strong></td>
+                    <td>S0/1/0</td>
+                    <td>10.81.1.178</td>
+                    <td>255.255.255.252</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td>S0/1/1</td>
+                    <td>10.81.1.185</td>
+                    <td>255.255.255.252</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td rowspan="4"><strong>R3</strong></td>
+                    <td>G0/0/0</td>
+                    <td>10.81.1.161</td>
+                    <td>255.255.255.240</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td>G0/0/1</td>
+                    <td>10.81.1.129</td>
+                    <td>255.255.255.224</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td>S0/1/0</td>
+                    <td>10.81.1.186</td>
+                    <td>255.255.255.252</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td>S0/1/1</td>
+                    <td>10.81.1.190</td>
+                    <td>255.255.255.252</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td rowspan="2"><strong>R4</strong></td>
+                    <td>S0/1/0</td>
+                    <td>10.81.1.182</td>
+                    <td>255.255.255.252</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td>S0/1/1</td>
+                    <td>10.81.1.189</td>
+                    <td>255.255.255.252</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td><strong>PC-A</strong></td>
+                    <td>NIC</td>
+                    <td>10.81.1.126</td>
+                    <td>255.255.255.128</td>
+                    <td>10.81.1.1</td>
+                </tr>
+                <tr>
+                    <td><strong>ServerB1</strong></td>
+                    <td>NIC</td>
+                    <td>10.81.1.174</td>
+                    <td>255.255.255.240</td>
+                    <td>10.81.1.161</td>
+                </tr>
+                <tr>
+                    <td><strong>ServerB2</strong></td>
+                    <td>NIC</td>
+                    <td>10.81.1.158</td>
+                    <td>255.255.255.224</td>
+                    <td>10.81.1.129</td>
+                </tr>
+            </table>
+        </section>
+
+        <section>
+            <h3>4. CẤU HÌNH CƠ BẢN CHO THIẾT BỊ (Yêu cầu 3)</h3>
+
+            <h4>4.1 Cấu hình Router R1</h4>
+            <div class="code-block"><span class="prompt">Router&gt;</span> <span class="command">enable</span>
+                <span class="prompt">Router#</span> <span class="command">configure terminal</span>
+                <span class="prompt">Router(config)#</span> <span class="command">hostname R1</span>
+
+                <span class="comment">! Cấu hình mật khẩu</span>
+                <span class="prompt">R1(config)#</span> <span class="command">enable password cisco</span>
+                <span class="prompt">R1(config)#</span> <span class="command">service password-encryption</span>
+
+                <span class="comment">! Cấu hình console</span>
+                <span class="prompt">R1(config)#</span> <span class="command">line console 0</span>
+                <span class="prompt">R1(config-line)#</span> <span class="command">password cisco</span>
+                <span class="prompt">R1(config-line)#</span> <span class="command">login</span>
+                <span class="prompt">R1(config-line)#</span> <span class="command">exit</span>
+
+                <span class="comment">! Cấu hình telnet</span>
+                <span class="prompt">R1(config)#</span> <span class="command">line vty 0 4</span>
+                <span class="prompt">R1(config-line)#</span> <span class="command">password cisco</span>
+                <span class="prompt">R1(config-line)#</span> <span class="command">login</span>
+                <span class="prompt">R1(config-line)#</span> <span class="command">exit</span>
+            </div>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="router_config_r1.png" alt="Router R1 Configuration"
+                    style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <p style="font-style: italic; color: #666; margin-top: 8px;">Hình 4. Cấu hình cơ bản Router R1</p>
+            </div>
+
+            <h4>4.2 Cấu hình Router R2, R3, R4</h4>
+            <p>Thực hiện tương tự R1, thay đổi hostname tương ứng (R2, R3, R4)</p>
+        </section>
+
+        <section>
+            <h3>5. CẤU HÌNH INTERFACE (Yêu cầu 4)</h3>
+
+            <h4>5.1 Cấu hình Interface trên R1</h4>
+            <div class="code-block"><span class="prompt">R1(config)#</span> <span class="command">interface
+                    GigabitEthernet 0/0/1</span>
+                <span class="prompt">R1(config-if)#</span> <span class="command">ip address 10.81.1.1
+                    255.255.255.128</span>
+                <span class="prompt">R1(config-if)#</span> <span class="command">no shutdown</span>
+                <span class="prompt">R1(config-if)#</span> <span class="command">exit</span>
+
+                <span class="prompt">R1(config)#</span> <span class="command">interface Serial 0/1/0</span>
+                <span class="prompt">R1(config-if)#</span> <span class="command">ip address 10.81.1.177
+                    255.255.255.252</span>
+                <span class="prompt">R1(config-if)#</span> <span class="command">no shutdown</span>
+                <span class="prompt">R1(config-if)#</span> <span class="command">exit</span>
+
+                <span class="prompt">R1(config)#</span> <span class="command">interface Serial 0/1/1</span>
+                <span class="prompt">R1(config-if)#</span> <span class="command">ip address 10.81.1.181
+                    255.255.255.252</span>
+                <span class="prompt">R1(config-if)#</span> <span class="command">no shutdown</span>
+                <span class="prompt">R1(config-if)#</span> <span class="command">exit</span>
+            </div>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="interface_config_r1.png" alt="Interface Config R1"
+                    style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <p style="font-style: italic; color: #666; margin-top: 8px;">Hình 5. Cấu hình Interface trên R1</p>
+            </div>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="show_ip_interface_brief.png" alt="Show IP Interface Brief"
+                    style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <p style="font-style: italic; color: #666; margin-top: 8px;">Hình 6. Kết quả show ip interface brief
+                    trên R1</p>
+            </div>
+
+            <h4>5.2 Cấu hình Interface trên R2</h4>
+            <div class="code-block"><span class="prompt">R2(config)#</span> <span class="command">interface Serial
+                    0/1/0</span>
+                <span class="prompt">R2(config-if)#</span> <span class="command">ip address 10.81.1.178
+                    255.255.255.252</span>
+                <span class="prompt">R2(config-if)#</span> <span class="command">no shutdown</span>
+                <span class="prompt">R2(config-if)#</span> <span class="command">exit</span>
+
+                <span class="prompt">R2(config)#</span> <span class="command">interface Serial 0/1/1</span>
+                <span class="prompt">R2(config-if)#</span> <span class="command">ip address 10.81.1.185
+                    255.255.255.252</span>
+                <span class="prompt">R2(config-if)#</span> <span class="command">no shutdown</span>
+                <span class="prompt">R2(config-if)#</span> <span class="command">exit</span>
+            </div>
+            <div class="info-box" style="margin-top: 15px;"><em>Cấu hình tương tự R1 cho các interface của Router
+                    khác</em></div>
+
+            <h4>5.3 Cấu hình Interface trên R3</h4>
+            <div class="code-block"><span class="prompt">R3(config)#</span> <span class="command">interface
+                    GigabitEthernet 0/0/0</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">ip address 10.81.1.161
+                    255.255.255.240</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">no shutdown</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">exit</span>
+
+                <span class="prompt">R3(config)#</span> <span class="command">interface GigabitEthernet 0/0/1</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">ip address 10.81.1.129
+                    255.255.255.224</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">no shutdown</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">exit</span>
+
+                <span class="prompt">R3(config)#</span> <span class="command">interface Serial 0/1/0</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">ip address 10.81.1.186
+                    255.255.255.252</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">no shutdown</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">exit</span>
+
+                <span class="prompt">R3(config)#</span> <span class="command">interface Serial 0/1/1</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">ip address 10.81.1.190
+                    255.255.255.252</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">no shutdown</span>
+                <span class="prompt">R3(config-if)#</span> <span class="command">exit</span>
+            </div>
+            <div class="screenshot-placeholder">Chèn screenshot kết quả show ip interface brief trên R3</div>
+
+            <h4>5.4 Cấu hình Interface trên R4</h4>
+            <div class="code-block"><span class="prompt">R4(config)#</span> <span class="command">interface Serial
+                    0/1/0</span>
+                <span class="prompt">R4(config-if)#</span> <span class="command">ip address 10.81.1.182
+                    255.255.255.252</span>
+                <span class="prompt">R4(config-if)#</span> <span class="command">no shutdown</span>
+                <span class="prompt">R4(config-if)#</span> <span class="command">exit</span>
+
+                <span class="prompt">R4(config)#</span> <span class="command">interface Serial 0/1/1</span>
+                <span class="prompt">R4(config-if)#</span> <span class="command">ip address 10.81.1.189
+                    255.255.255.252</span>
+                <span class="prompt">R4(config-if)#</span> <span class="command">no shutdown</span>
+                <span class="prompt">R4(config-if)#</span> <span class="command">exit</span>
+            </div>
+            <div class="screenshot-placeholder">Chèn screenshot kết quả show ip interface brief trên R4</div>
+
+            <h4>5.5 Cấu hình IP cho PC và Server</h4>
+            <div class="info-box">
+                <strong>PC-A:</strong> IP: 10.81.1.126 | Mask: 255.255.255.128 | Gateway: 10.81.1.1<br>
+                <strong>ServerB1:</strong> IP: 10.81.1.174 | Mask: 255.255.255.240 | Gateway: 10.81.1.161<br>
+                <strong>ServerB2:</strong> IP: 10.81.1.158 | Mask: 255.255.255.224 | Gateway: 10.81.1.129
+            </div>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="pc_ip_config.png" alt="PC IP Configuration"
+                    style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <p style="font-style: italic; color: #666; margin-top: 8px;">Hình 7. Cấu hình IP cho PC-A trong Packet
+                    Tracer</p>
+            </div>
+        </section>
+
+        <section>
+            <h3>6. CẤU HÌNH ĐỊNH TUYẾN TĨNH (Yêu cầu 5)</h3>
+
+            <div class="warning-box">
+                <strong>Yêu cầu đường đi:</strong><br>
+                📍 <strong>Đường chính:</strong> PC-A → R1 → R2 → R3 → ServerB1, ServerB2<br>
+                📍 <strong>Đường dự phòng:</strong> PC-A → R1 → R4 → R3 → ServerB1, ServerB2
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="static_routing_paths.png" alt="Static Routing Paths"
+                    style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <p style="font-style: italic; color: #666; margin-top: 10px;">Hình 3. Sơ đồ đường đi chính và đường dự
+                    phòng</p>
+            </div>
+
+            <h4>6.1 Static Route trên R1</h4>
+            <div class="code-block"><span class="comment">! Đường chính qua R2 (AD mặc định = 1)</span>
+                <span class="prompt">R1(config)#</span> <span class="command">ip route 10.81.1.160 255.255.255.240
+                    10.81.1.178</span>
+                <span class="prompt">R1(config)#</span> <span class="command">ip route 10.81.1.128 255.255.255.224
+                    10.81.1.178</span>
+
+                <span class="comment">! Đường dự phòng qua R4 (AD = 10)</span>
+                <span class="prompt">R1(config)#</span> <span class="command">ip route 10.81.1.160 255.255.255.240
+                    10.81.1.182 10</span>
+                <span class="prompt">R1(config)#</span> <span class="command">ip route 10.81.1.128 255.255.255.224
+                    10.81.1.182 10</span>
+            </div>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="static_route_config.png" alt="Static Route Config"
+                    style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <p style="font-style: italic; color: #666; margin-top: 8px;">Hình 8. Cấu hình Static Route trên R1</p>
+            </div>
+
+            <h4>6.2 Static Route trên R2</h4>
+            <div class="code-block"><span class="prompt">R2(config)#</span> <span class="command">ip route 10.81.1.160
+                    255.255.255.240 10.81.1.186</span>
+                <span class="prompt">R2(config)#</span> <span class="command">ip route 10.81.1.128 255.255.255.224
+                    10.81.1.186</span>
+                <span class="prompt">R2(config)#</span> <span class="command">ip route 10.81.1.0 255.255.255.128
+                    10.81.1.177</span>
+            </div>
+            <div class="info-box" style="margin-top: 15px;"><em>Cấu hình tương tự cho R2, R3, R4</em></div>
+
+            <h4>6.3 Static Route trên R3</h4>
+            <div class="code-block"><span class="comment">! Đường chính qua R2 (AD = 1)</span>
+                <span class="prompt">R3(config)#</span> <span class="command">ip route 10.81.1.0 255.255.255.128
+                    10.81.1.185</span>
+
+                <span class="comment">! Đường dự phòng qua R4 (AD = 10)</span>
+                <span class="prompt">R3(config)#</span> <span class="command">ip route 10.81.1.0 255.255.255.128
+                    10.81.1.189 10</span>
+            </div>
+            <div class="info-box" style="margin-top: 15px;"><em>Cấu hình tương tự cho R2, R3, R4</em></div>
+
+            <h4>6.4 Static Route trên R4</h4>
+            <div class="code-block"><span class="prompt">R4(config)#</span> <span class="command">ip route 10.81.1.160
+                    255.255.255.240 10.81.1.190</span>
+                <span class="prompt">R4(config)#</span> <span class="command">ip route 10.81.1.128 255.255.255.224
+                    10.81.1.190</span>
+                <span class="prompt">R4(config)#</span> <span class="command">ip route 10.81.1.0 255.255.255.128
+                    10.81.1.181</span>
+            </div>
+            <div class="info-box" style="margin-top: 15px;"><em>Cấu hình tương tự cho R2, R3, R4</em></div>
+
+            <h4>6.5 Lưu cấu hình</h4>
+            <div class="code-block"><span class="prompt">R1#</span> <span class="command">copy running-config
+                    startup-config</span>
+                <span class="prompt">R2#</span> <span class="command">copy running-config startup-config</span>
+                <span class="prompt">R3#</span> <span class="command">copy running-config startup-config</span>
+                <span class="prompt">R4#</span> <span class="command">copy running-config startup-config</span>
+            </div>
+        </section>
+
+        <section>
+            <h3>7. KIỂM TRA VÀ XÁC NHẬN</h3>
+
+            <h4>7.1 Kiểm tra Routing Table</h4>
+            <div class="code-block"><span class="prompt">R1#</span> <span class="command">show ip route</span></div>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="show_ip_route.png" alt="Show IP Route"
+                    style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <p style="font-style: italic; color: #666; margin-top: 8px;">Hình 9. Kết quả show ip route trên R1 (S =
+                    Static Route)</p>
+            </div>
+
+            <h4>7.2 Kiểm tra kết nối đường chính</h4>
+            <div class="code-block"><span class="prompt">C:\&gt;</span> <span class="command">ping 10.81.1.174</span>
+            </div>
+            <div class="success-box">
+                <strong>Kết quả mong đợi:</strong> Reply from 10.81.1.174: bytes=32 time&lt;1ms TTL=125
+            </div>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="ping_result.png" alt="Ping Result"
+                    style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <p style="font-style: italic; color: #666; margin-top: 8px;">Hình 10. Kết quả ping từ PC-A đến ServerB1
+                    (10.81.1.174)</p>
+            </div>
+
+            <div class="code-block"><span class="prompt">C:\&gt;</span> <span class="command">tracert 10.81.1.174</span>
+            </div>
+            <div class="success-box">
+                <strong>Kết quả mong đợi (đường chính qua R2):</strong><br>
+                1 &nbsp;&nbsp;10.81.1.1 (R1)<br>
+                2 &nbsp;&nbsp;10.81.1.178 (R2)<br>
+                3 &nbsp;&nbsp;10.81.1.186 (R3)<br>
+                4 &nbsp;&nbsp;10.81.1.174 (ServerB1)
+            </div>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="tracert_primary.png" alt="Tracert Primary Path"
+                    style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <p style="font-style: italic; color: #666; margin-top: 8px;">Hình 11. Tracert đường chính: PC-A → R1 →
+                    R2 → R3 → ServerB1</p>
+            </div>
+
+            <h4>7.3 Kiểm tra đường dự phòng</h4>
+            <div class="warning-box">
+                <strong>Bước 1:</strong> Tắt Router R2 (hoặc shutdown interface trên R2)<br>
+                <strong>Bước 2:</strong> Thực hiện tracert lại từ PC-A đến ServerB1
+            </div>
+            <div class="success-box">
+                <strong>Kết quả mong đợi (đường dự phòng qua R4):</strong><br>
+                1 &nbsp;&nbsp;10.81.1.1 (R1)<br>
+                2 &nbsp;&nbsp;10.81.1.182 (R4)<br>
+                3 &nbsp;&nbsp;10.81.1.190 (R3)<br>
+                4 &nbsp;&nbsp;10.81.1.174 (ServerB1)
+            </div>
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="tracert_backup.png" alt="Tracert Backup Path"
+                    style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+                <p style="font-style: italic; color: #666; margin-top: 8px;">Hình 12. Tracert đường dự phòng: PC-A → R1
+                    → R4 → R3 → ServerB1 (khi R2 bị tắt)</p>
+            </div>
+        </section>
+
+        <div class="conclusion">
+            <h3>8. KẾT LUẬN</h3>
+            <ul>
+                <li>Đã hoàn thành chia địa chỉ IP bằng VLSM cho 7 subnet</li>
+                <li>Đã cấu hình hostname và password cho 4 router (R1, R2, R3, R4)</li>
+                <li>Đã cấu hình IP address cho tất cả interface</li>
+                <li>Đã cấu hình Static Routing với đường chính (qua R2) và đường dự phòng (qua R4)</li>
+                <li>Đã kiểm tra kết nối thành công bằng ping và tracert</li>
+                <li>Đã kiểm tra đường dự phòng hoạt động khi R2 bị tắt</li>
+            </ul>
+        </div>
+
+        <section style="margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #ddd;">
+            <p><strong>Ngày hoàn thành:</strong> ___/___/2026</p>
+            <p style="margin-top: 20px;"><strong>Chữ ký sinh viên:</strong></p>
+            <p style="margin-top: 50px;">_________________________</p>
+        </section>
+    </div>
+</body>
+
+</html>
